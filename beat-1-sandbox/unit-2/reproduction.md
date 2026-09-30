@@ -14,6 +14,7 @@ label is not graded.
 ## Your identity upstream
 
 **GitHub username**
+dinakarbl00
 
 [Your GitHub username, exactly as it appears on your profile — no `@`, no profile URL. Your
 comments upstream are identified by this name.]
@@ -22,18 +23,64 @@ comments upstream are identified by this name.]
 
 ## Posted upstream
 
-**Claim comment**
+Claim comment link:
 
-[Link to the comment where you claimed the issue. Use the comment's own permalink, not the
-issue page on its own. **Then paste the text of that comment underneath the link** — the
-pasted text is what this field is graded on, so copy across what you actually posted.]
+https://github.com/codepath/pathreview-ai301-fa26-s3/issues/68#issuecomment-5903796154
 
-**Reproduction comment**
+Claim comment text:
 
-[Link to the comment where you posted your reproduction. It must record the environment
-(OS, relevant versions, code state), steps a stranger could follow, and what you observed.
-**Then paste the text of that comment underneath the link** — the pasted text is what this
-field is graded on, so copy across what you actually posted.]
+I'd like to work on this issue. I'll reproduce the ZeroDivisionError that occurs when BM25 keyword search is used with an empty index, verify the behavior in the relevant search path and test, and follow up here with the environment, steps, and results I observe.
+
+Repro comment link:
+
+https://github.com/codepath/pathreview-ai301-fa26-s3/issues/68#issuecomment-5904090606
+
+Repro comment text:
+
+I was able to reproduce the empty-index failure from #68.
+
+Environment:
+- Windows NT 10.0.26200.0
+- Python 3.11.13
+- pytest 9.1.1
+- rank-bm25 0.2.2
+- repo commit: 2f4e82f52efbcfcc57d65b3fa5348672163ca088
+
+Steps:
+1. Created a virtual environment and installed the project with development dependencies using `pip install -e ".[dev]"`.
+2. Ran the existing empty-index unit test without honoring its xfail marker:
+
+   `pytest tests/unit/test_keyword_search.py::TestKeywordSearcher::test_empty_index -vv --runxfail`
+
+Observed behavior:
+
+The test fails at:
+
+`searcher.index([])`
+
+`KeywordSearcher.index()` creates an empty tokenized corpus and passes it to `BM25Okapi`. Inside `rank_bm25`, initialization reaches:
+
+`self.avgdl = num_doc / self.corpus_size`
+
+with an empty corpus, which raises:
+
+`ZeroDivisionError: division by zero`
+
+The relevant traceback ends with:
+
+`FAILED tests/unit/test_keyword_search.py::TestKeywordSearcher::test_empty_index - ZeroDivisionError: division by zero`
+
+Expected behavior:
+
+Indexing an empty list should not raise an exception, and searching the empty index should return `[]`, which is what the existing unit test expects.
+
+I also ran the test normally:
+
+`pytest tests/unit/test_keyword_search.py::TestKeywordSearcher::test_empty_index -vv`
+
+and it reports `XFAIL` with the existing reason for issue #68.
+
+So I was able to reproduce the reported ZeroDivisionError on the current repo state.
 
 ## Eval iterations
 
