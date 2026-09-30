@@ -16,8 +16,6 @@ label is not graded.
 **GitHub username**
 dinakarbl00
 
-[Your GitHub username, exactly as it appears on your profile — no `@`, no profile URL. Your
-comments upstream are identified by this name.]
 
 ---
 
@@ -89,28 +87,29 @@ fields.
 
 **Run history**
 
-[The agreement score of each run you did, in order. A single run is a complete answer if
-only one run occurred. **The last score in your list must match the agreement line in the
-`eval-run.txt` you committed** — that file is the record of your final run.]
+1. `agreement: 17/20 scored items  (bar: 18/20: below the bar)`
+2. `agreement: 5/5 scored items` — targeted rerun of `pkg-02`, `pkg-09`, `pkg-10`, `pkg-12`, and `pkg-20` after revising `behavior-matches` and `repo-conventions`.
+3. `agreement: 18/20 scored items  (bar: 18/20: PASS)`
 
 **Package analysis**
 
-[Pick one scored package (`pkg-01` through `pkg-20` — the four `calib-` packages are never
-scored). Name it by id, say what your rubric decided and what the gold label said, and
-explain why your rubric read it that way.]
+I analyzed `pkg-10`. My rubric gave it a `reject` verdict, while the gold label was `accept`.
+
+The package passed the environment, followable-steps, honesty, claim, and repository-conventions checks. The only failing check was `behavior-matches`. My rubric marked that check `unclear` because the report said, “A fish shell resolving PWD logically looks necessary to hit the contract_repo_path failure; I did not have one available.” Since the attempt used Linux with zsh instead of the reported macOS + fish environment, the grader interpreted that as possibly not exercising the same code path that triggers the bug.
+
+I understand why the gold label accepted it: the report clearly documented the environment difference, gave complete reproduction steps, and honestly reported that the bug could not be reproduced under those conditions. My rubric was more conservative because `behavior-matches` still required the attempt to meaningfully exercise the same failure condition, so the missing fish-specific PWD behavior caused the rejection.
 
 **Check rationale**
 
-[Quote one check from the `rubric.md` you uploaded to `tools/repro-check/`, exactly as it reads now.
-Then say why it reads that way — what you revised to get there, or what you rejected in
-favour of it.]
+I focused on the `behavior-matches` check. Its current pass condition is:
+
+> “Pass when the evidence comes from an attempt that meaningfully tests the same reported behavior or condition. The bug itself does not have to occur: an honest cannot-reproduce attempt can pass when the report shows what happened instead and clearly identifies any material environment or trigger difference that may explain the result. Reject when the artifacts test a different feature, code path, input, or failure condition such that they do not provide evidence about the reported issue, or when the shown output is unrelated to the attempted reproduction.”
+
+I chose this wording because a reproduction report should prove that the contributor actually tested the issue being discussed, not just that they ran something and got an error. At the same time, the assignment allows an honest cannot-reproduce result, so I did not want the check to require the bug itself to appear every time. The threshold therefore focuses on whether the same behavior or condition was meaningfully tested and whether any important environment or trigger differences were documented.
 
 **Trade-offs**
 
-[Every check gives something up. Any one of these is a complete answer: a package whose
-result it changes, a canary you re-ran with `--only`, a case you accept it will miss, or a
-stated reason nothing changed elsewhere. "Nothing changed, and here is how I know" earns
-the point in full when the reason follows.]
+I chose to make the reproduction checks strict enough that the evidence has to test the same issue, but flexible enough to allow an honest cannot-reproduce result. The trade-off is that this can be conservative in cases like `pkg-10`, where the report was careful and well documented but did not use the exact environment needed to exercise the suspected code path. I preferred that risk over accepting reports that are detailed but actually test a different condition. I also limited AI-disclosure requirements to the surfaces where the repository explicitly requires them, so issue comments are not rejected because of policies that only apply to code or pull requests.
 
 ---
 
