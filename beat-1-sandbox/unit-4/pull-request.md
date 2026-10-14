@@ -2,12 +2,7 @@
 
 Path: `beat-1-sandbox/unit-4/pull-request.md`
 
-Record of the pull request you opened against the Path Review repo, and of the evaluation
-runs that produced `eval-run.txt`. This file is graded at the path above; a copy kept
-anywhere else in the repository is not read.
-
-Complete every labelled field below. Each is graded on its own; content placed under the wrong
-label is not graded.
+Record of the pull request opened against the Path Review repository and the evaluation runs that produced `eval-run.txt`.
 
 ---
 
@@ -15,47 +10,107 @@ label is not graded.
 
 **Pull request**
 
-[Link to the pull request you opened. It must be the pull request's own page on the Path
-Review repo, not your fork's branch page.]
+https://github.com/codepath/pathreview-ai301-fa26-s3/pull/208
 
 **Branch**
 
-[The name of the branch the pull request comes from, exactly as it appears in your fork.
-The naming shape is a type prefix, then the issue number, then a short description. **The
-issue number in the branch name must be the number of the issue the pull request fixes** —
-a name carrying any other number does not satisfy this field.]
+`fix/68-empty-index`
 
 ## Eval iterations
 
-Answer all four sections. Quote source text directly; paraphrase does not satisfy these
-fields.
-
 **Run history**
 
-[The agreement score of each run you did, in order. A single run is a complete answer if
-only one run occurred. **The last score in your list must match the agreement line in the
-`eval-run.txt` you committed** — that file is the record of your final run.]
+1. My first attempt to run the full harness stopped before reporting any verdict table because Windows Python used `cp1252` and raised `UnicodeEncodeError` on an arrow character. This attempt did not produce an agreement score or a saved full run.
+2. I set `PYTHONIOENCODING=utf-8` and `PYTHONUTF8=1` in PowerShell and reran the full evaluation without changing the skill. The completed scored run reported:
+
+   `agreement: 19/20 scored items  (bar: 18/20: PASS)`
+
+   Its category line was:
+
+   `categories: clear-accept 6/7  not-tested 4/4  silent-drift 4/4  standards-wall 2/2  unreviewable 3/3`
+
+This is the run saved in `beat-1-sandbox/unit-4/eval-run.txt`. I did not run any targeted `--only` evaluations or make rubric revisions after this scored run.
 
 **Package analysis**
 
-[Pick one scored package (`pkg-01` through `pkg-20` — the four `calib-` packages are never
-scored). Name it by id, say what your rubric decided and what the gold label said, and
-explain why your rubric read it that way.]
+I reviewed `pkg-16` because it was my only scored disagreement. The harness showed:
+
+`pkg-16  clear-accept  accept  reject  NO     failed: Claims match implementation`
+
+My rubric returned `reject`, while the gold label was `accept`. The failure was attributed to the **Claims match implementation** check. That check requires the description's statements about the change and its scope to be supported by the diff and plan. I don't have the per-check evidence line for `pkg-16` in the terminal summary, so I cannot reliably identify which exact claim caused the model to fail it. The result suggests the check was applied more strictly than the gold judgment in this case, but I cannot claim a specific defect in the package from this summary alone.
+
+I kept the result rather than revising the check just to change one verdict: the overall evaluation passed at 19/20 and every category had at least one match.
 
 **Check rationale**
 
-[Quote one check from the `rubric.md` you uploaded to `tools/pr-precheck/`, exactly as it reads now.
-Then say why it reads that way — what you revised to get there, or what you rejected in
-favour of it.]
+I focused on the **Claims match implementation** check, which reads exactly as follows in my uploaded `tools/pr-precheck/rubric.md`:
+
+> | Claims match implementation | Compare the PR title, summary, change list, and claims in the description with specific changed lines in the diff and the plan. | The description accurately identifies what changed and what remains incomplete; it does not claim behavior, coverage, or scope the diff does not support. Concise but accurate descriptions pass. | required |
+
+I chose this check because a PR description should reflect the actual code instead of just sounding convincing. I made it required so unsupported implementation claims can prevent a PR from being marked ready. At the same time, the pass condition explicitly allows concise descriptions, so the check is about accuracy rather than writing style. I did not revise this wording after the full run because it correctly captures the kind of claim-to-diff comparison the assignment asks for.
 
 **Trade-offs**
 
-[Every check gives something up. Any one of these is a complete answer: a package whose
-result it changes, a canary you re-ran with `--only`, a case you accept it will miss, or a
-stated reason nothing changed elsewhere. "Nothing changed, and here is how I know" earns
-the point in full when the reason follows.]
+Making claims-to-implementation agreement a required check can reject a PR when the evaluator cannot confidently match a description to the diff, even if the gold label considers the package acceptable. `pkg-16` was the one case where that happened in my run. I accepted that conservative trade-off rather than loosening the check without inspecting the exact per-check evidence. The same rubric matched all four silent-drift packages, all four not-tested packages, both standards-wall packages, and all three unreviewable packages. With 19/20 overall and every category represented, I kept the evaluated skill and its saved run unchanged.
 
 ---
 
-Related paths: `eval-run.txt` in this directory; your skill's files in
-`tools/pr-precheck/`.
+Related paths: `eval-run.txt` in this directory; skill files in `tools/pr-precheck/`.
+# Unit 4 — Test and Submit
+
+Path: `beat-1-sandbox/unit-4/pull-request.md`
+
+Record of the pull request opened against the Path Review repository and the evaluation runs that produced `eval-run.txt`.
+
+---
+
+## Your pull request
+
+**Pull request**
+
+https://github.com/codepath/pathreview-ai301-fa26-s3/pull/208
+
+**Branch**
+
+`fix/68-empty-index`
+
+## Eval iterations
+
+**Run history**
+
+1. My first attempt to run the full harness stopped before reporting any verdict table because Windows Python used `cp1252` and raised `UnicodeEncodeError` on an arrow character. This attempt did not produce an agreement score or a saved full run.
+2. I set `PYTHONIOENCODING=utf-8` and `PYTHONUTF8=1` in PowerShell and reran the full evaluation without changing the skill. The completed scored run reported:
+
+   `agreement: 19/20 scored items  (bar: 18/20: PASS)`
+
+   Its category line was:
+
+   `categories: clear-accept 6/7  not-tested 4/4  silent-drift 4/4  standards-wall 2/2  unreviewable 3/3`
+
+This is the run saved in `beat-1-sandbox/unit-4/eval-run.txt`. I did not run any targeted `--only` evaluations or make rubric revisions after this scored run.
+
+**Package analysis**
+
+I reviewed `pkg-16` because it was my only scored disagreement. The harness showed:
+
+`pkg-16  clear-accept  accept  reject  NO     failed: Claims match implementation`
+
+My rubric returned `reject`, while the gold label was `accept`. The failure was attributed to the **Claims match implementation** check. That check requires the description's statements about the change and its scope to be supported by the diff and plan. I don't have the per-check evidence line for `pkg-16` in the terminal summary, so I cannot reliably identify which exact claim caused the model to fail it. The result suggests the check was applied more strictly than the gold judgment in this case, but I cannot claim a specific defect in the package from this summary alone.
+
+I kept the result rather than revising the check just to change one verdict: the overall evaluation passed at 19/20 and every category had at least one match.
+
+**Check rationale**
+
+I focused on the **Claims match implementation** check, which reads exactly as follows in my uploaded `tools/pr-precheck/rubric.md`:
+
+> | Claims match implementation | Compare the PR title, summary, change list, and claims in the description with specific changed lines in the diff and the plan. | The description accurately identifies what changed and what remains incomplete; it does not claim behavior, coverage, or scope the diff does not support. Concise but accurate descriptions pass. | required |
+
+I chose this check because a PR description should reflect the actual code instead of just sounding convincing. I made it required so unsupported implementation claims can prevent a PR from being marked ready. At the same time, the pass condition explicitly allows concise descriptions, so the check is about accuracy rather than writing style. I did not revise this wording after the full run because it correctly captures the kind of claim-to-diff comparison the assignment asks for.
+
+**Trade-offs**
+
+Making claims-to-implementation agreement a required check can reject a PR when the evaluator cannot confidently match a description to the diff, even if the gold label considers the package acceptable. `pkg-16` was the one case where that happened in my run. I accepted that conservative trade-off rather than loosening the check without inspecting the exact per-check evidence. The same rubric matched all four silent-drift packages, all four not-tested packages, both standards-wall packages, and all three unreviewable packages. With 19/20 overall and every category represented, I kept the evaluated skill and its saved run unchanged.
+
+---
+
+Related paths: `eval-run.txt` in this directory; skill files in `tools/pr-precheck/`.

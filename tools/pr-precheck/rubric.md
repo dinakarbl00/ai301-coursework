@@ -1,0 +1,23 @@
+# Rubric: is this pull request ready to submit?
+
+## Checks
+
+| Check | Evidence | Pass condition | Weight |
+|---|---|---|---|
+| Plan fidelity | Compare the issue and accepted plan (including any Deviations) with the PR's actual changed files and hunks in its unified diff. | Every material change is within the issue and the accepted plan, or is identified as a deviation with a concrete reason. Any planned work not delivered is explicitly acknowledged. Reject undisclosed extra work, silently missing work, or a claimed fix that contradicts the actual diff. An honestly explained, limited shortfall is not by itself a failure. | required |
+| Claims match implementation | Compare the PR title, summary, change list, and claims in the description with specific changed lines in the diff and the plan. | The description accurately identifies what changed and what remains incomplete; it does not claim behavior, coverage, or scope the diff does not support. Concise but accurate descriptions pass. | required |
+| Observable test evidence | Compare the plan's reproduction and test steps with the PR's recorded before/after results and test evidence. | Evidence names concrete commands, inputs, observations, or test outputs that let a reviewer determine what was exercised and what happened. A claimed fix has meaningful after evidence tied to the original problem, or an explicit, reasoned limitation. Bare assurances such as "tested" or "works" with no observable result fail. | required |
+| Repository checks disclosed | Compare the repository's stated testing requirements in its repo-facts block / PR template with the recorded test commands and outcomes. In live mode, use the PR template, contributing guide, and test_evidence.md. | Every applicable required check is either shown with its actual result or explicitly identified as not run with a truthful explanation. Do not require every check to pass: a failure or unavailable suite honestly reported with its impact can still pass this disclosure check. A checkbox alone, without supporting results where required, is insufficient. | required |
+| Focused, reviewable diff | Inspect the unified diff and commit changes against the issue and plan; look for unrelated edits, debug artifacts, generated noise, commented-out code, and accidental churn. | The diff contains only changes reasonably needed for the issue and supporting tests/configuration. There is no unexplained unrelated work or obvious disposable debugging debris that would prevent meaningful review. A substantial diff is allowed when its changes are necessary and traceable. | required |
+| Repository standards and AI disclosure | Compare the PR draft against the repository's PR-template asks and contribution/AI policy in the repo-facts block (eval) or `.github/PULL_REQUEST_TEMPLATE.md` and `docs/CONTRIBUTING.md` (live). | All applicable mandatory requests are substantively addressed: required issue linkage, change summary, test reporting, required sections or explanations, and an honest AI-use disclosure when required. A section may use "N/A" with a reason where appropriate. Do not invent standards absent from the supplied repository facts. | required |
+| Review clarity | Read the PR title, description, and reviewer notes against the diff and test results. | A reviewer can identify the problem, the intended fix, and any noteworthy limitation without excessive detective work. Minor formatting, wording, or stylistic imperfections do not fail the package. | preferred |
+
+## Verdict rule
+
+Grade every check as `pass`, `fail`, or `unclear`, with a one-line citation to the deciding evidence. Apply the checks to the artifacts, not to how polished the writing looks.
+
+Return `accept` only when every `required` check is `pass`. Return `reject` if any `required` check is `fail` or `unclear`. An `unclear` required check counts as a failure for the verdict because the evidence is not verifiable. A `preferred` check may be `fail` or `unclear` without changing the verdict.
+
+Do not automatically reject a PR because a test fails, a planned detail was omitted, or a constraint remains: first determine whether the outcome is honestly documented, the evidence is observable, the implementation is faithful to the stated plan or recorded deviations, and repository requirements are met. Conversely, do not accept a package that hides scope drift, supplies unsupported testing claims, contains unrelated debris, or ignores mandatory repository standards.
+
+The only final verdicts are `accept` (ready to submit) and `reject` (hold). Never issue a numeric score or a third verdict.
